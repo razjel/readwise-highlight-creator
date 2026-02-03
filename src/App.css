@@ -263,6 +263,7 @@ body {
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
+  min-height: 80px;
   background-color: #1a1a2e;
   color: #e0e0e0;
 }
