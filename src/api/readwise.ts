@@ -3,25 +3,30 @@ import type { Article } from '../types';
 const READWISE_TOKEN = import.meta.env.VITE_READWISE_TOKEN;
 
 export async function fetchArticlesWithTag(tag: string): Promise<Article[]> {
-  const response = await fetch(`/api/readwise/list?withHtmlContent=false`, {
-    headers: {
-      'Authorization': `Token ${READWISE_TOKEN}`,
-      'Content-Type': 'application/json'
+  const allResults: any[] = [];
+  let nextPageCursor: string | null = null;
+
+  do {
+    const params = new URLSearchParams({ withHtmlContent: 'false', tag });
+    if (nextPageCursor) params.set('pageCursor', nextPageCursor);
+
+    const response = await fetch(`/api/readwise/list?${params}`, {
+      headers: {
+        'Authorization': `Token ${READWISE_TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Readwise API error: ${response.status}`);
     }
-  });
 
-  if (!response.ok) {
-    throw new Error(`Readwise API error: ${response.status}`);
-  }
+    const data = await response.json();
+    allResults.push(...data.results);
+    nextPageCursor = data.nextPageCursor ?? null;
+  } while (nextPageCursor);
 
-  const data = await response.json();
-
-  // Filter articles that have the specified tag
-  const filteredArticles = data.results.filter((doc: any) =>
-    doc.tags && Object.keys(doc.tags).includes(tag)
-  );
-
-  return filteredArticles.map((doc: any) => ({
+  return allResults.map((doc: any) => ({
     id: doc.id,
     title: doc.title || 'Untitled',
     author: doc.author || '',
