@@ -17,7 +17,7 @@ function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const fetchedArticles = await fetchArticlesWithTag('make-highlight');
+      const fetchedArticles = await fetchArticlesWithTag('highlight');
       setArticles(fetchedArticles.map(article => ({
         article,
         transcript: '',
@@ -119,7 +119,7 @@ function App() {
     if (!articleState) return;
 
     try {
-      await removeTagFromDocument(articleId, 'make-highlight', articleState.article.tags);
+      await removeTagFromDocument(articleId, 'highlight', articleState.article.tags);
       updateArticle(articleId, { isComplete: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to mark as complete');

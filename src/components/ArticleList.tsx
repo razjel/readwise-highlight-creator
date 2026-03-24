@@ -27,7 +27,7 @@ export function ArticleList({
   if (activeArticles.length === 0) {
     return (
       <div className="empty-state">
-        <p>No articles with tag "make-highlight" found.</p>
+        <p>No articles with tag "highlight" found.</p>
       </div>
     );
   }
